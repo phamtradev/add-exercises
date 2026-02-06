@@ -1,9 +1,6 @@
-Giải thích CRUD với MockAPI
+Giải thích CRUD với Mockaro
 
-Project này demo CRUD operations (Create, Read, Update, Delete) sử dụng cả Fetch API (async/await) và Axios với MockAPI.
-
-const API_URL = 'https://698549c96964f10bf252c6a9.mockapi.io/api/v1/users/users'
-Import useState để quản lý state, axios để gọi API. API_URL là endpoint từ MockAPI.
+Project này demo CRUD operations (Create, Read, Update, Delete) sử dụng cả Fetch API (async/await) và Axios với Mockaro API.
 
 2. State management
 const [users, setUsers] = useState([])
@@ -28,14 +25,18 @@ const docDuLieuFetch = async () => {
     const response = await fetch(API_URL)
     if (!response.ok) {
       if (response.status === 404) {
-        throw new Error('404: Resource "users" chưa được tạo trên MockAPI. Vui lòng kiểm tra lại!')
+        throw new Error('404: Resource chưa được tạo trên Mockaro. Vui lòng kiểm tra lại URL!')
       }
       throw new Error(`Lỗi ${response.status}: Không thể tải dữ liệu`)
     }
     const data = await response.json()
     setUsers(data)
   } catch (error) {
-    setLoi(error.message)
+    if (error.message === 'Failed to fetch' || error.message.includes('fetch')) {
+      setLoi('Lỗi kết nối: Không thể kết nối đến API. Kiểm tra URL hoặc kết nối mạng.')
+    } else {
+      setLoi(error.message)
+    }
   } finally {
     setTaiTrang(false)
   }
@@ -43,7 +44,7 @@ const docDuLieuFetch = async () => {
 fetch(API_URL): gửi GET request
 response.ok: kiểm tra response thành công
 response.json(): chuyển đổi sang JSON
-setUsers(data): cập nhật state với dữ liệu mới
+Xử lý lỗi network: kiểm tra "Failed to fetch" để hiển thị thông báo rõ ràng
 
 2. Dùng Axios
 const docDuLieuAxios = async () => {
@@ -54,7 +55,9 @@ const docDuLieuAxios = async () => {
     setUsers(response.data)
   } catch (error) {
     if (error.response?.status === 404) {
-      setLoi('404: Resource "users" chưa được tạo trên MockAPI. Vui lòng kiểm tra lại!')
+      setLoi('404: Resource chưa được tạo trên Mockaro. Vui lòng kiểm tra lại URL!')
+    } else if (error.message.includes('Network Error') || error.code === 'ERR_NETWORK') {
+      setLoi('Lỗi kết nối: Không thể kết nối đến API. Kiểm tra URL hoặc kết nối mạng.')
     } else {
       setLoi(error.message)
     }
@@ -64,7 +67,7 @@ const docDuLieuAxios = async () => {
 }
 axios.get(API_URL): gửi GET request
 response.data: dữ liệu đã được parse tự động
-error.response?.status: kiểm tra status code lỗi
+Xử lý lỗi network: kiểm tra ERR_NETWORK hoặc Network Error
 
 CREATE - Tạo mới
 
@@ -84,7 +87,7 @@ const taoMoiFetch = async () => {
     })
     if (!response.ok) {
       if (response.status === 404) {
-        throw new Error('404: Resource "users" chưa được tạo trên MockAPI. Vui lòng kiểm tra lại!')
+        throw new Error('404: Resource chưa được tạo. Vui lòng kiểm tra lại URL!')
       }
       throw new Error(`Lỗi ${response.status}: Không thể tạo mới`)
     }
@@ -93,7 +96,11 @@ const taoMoiFetch = async () => {
     setTen('')
     setEmail('')
   } catch (error) {
-    setLoi(error.message)
+    if (error.message === 'Failed to fetch' || error.message.includes('ERR_NAME_NOT_RESOLVED')) {
+      setLoi('Lỗi: Không thể kết nối đến API. Kiểm tra lại URL hoặc domain có tồn tại không.')
+    } else {
+      setLoi(error.message)
+    }
   } finally {
     setTaiTrang(false)
   }
@@ -101,7 +108,7 @@ const taoMoiFetch = async () => {
 method: 'POST': gửi POST request
 headers: định nghĩa Content-Type
 body: JSON.stringify(): chuyển đổi object thành JSON string
-setUsers([...users, data]): thêm user mới vào danh sách
+Xử lý lỗi ERR_NAME_NOT_RESOLVED: domain không tồn tại
 
 2. Dùng Axios
 const taoMoiAxios = async () => {
@@ -118,7 +125,9 @@ const taoMoiAxios = async () => {
     setEmail('')
   } catch (error) {
     if (error.response?.status === 404) {
-      setLoi('404: Resource "users" chưa được tạo trên MockAPI. Vui lòng kiểm tra lại!')
+      setLoi('404: Resource chưa được tạo. Vui lòng kiểm tra lại URL!')
+    } else if (error.message.includes('Network Error') || error.code === 'ERR_NETWORK' || error.code === 'ERR_NAME_NOT_RESOLVED') {
+      setLoi('Lỗi: Không thể kết nối đến API. Kiểm tra lại URL hoặc domain có tồn tại không.')
     } else {
       setLoi(error.message)
     }
@@ -128,7 +137,7 @@ const taoMoiAxios = async () => {
 }
 axios.post(API_URL, data): gửi POST request với data
 Axios tự động chuyển đổi object thành JSON
-Không cần JSON.stringify() như Fetch
+Xử lý nhiều loại lỗi network
 
 UPDATE - Cập nhật
 
@@ -158,7 +167,6 @@ const capNhatFetch = async () => {
 ${API_URL}/${dangSua.id}: URL với ID của user cần cập nhật
 method: 'PUT': gửi PUT request
 users.map(): cập nhật user trong danh sách
-setDangSua(null): thoát chế độ sửa
 
 2. Dùng Axios
 const capNhatAxios = async () => {
@@ -242,6 +250,7 @@ Fetch API:
 - Cần JSON.stringify() cho POST/PUT
 - Cú pháp dài hơn
 - Built-in trong browser
+- Lỗi network: "Failed to fetch"
 
 Axios:
 - Tự động parse JSON
@@ -249,10 +258,26 @@ Axios:
 - Tự động stringify object
 - Cú pháp ngắn gọn hơn
 - Cần cài đặt package
+- Lỗi network: ERR_NETWORK, ERR_NAME_NOT_RESOLVED
+
+Xử lý lỗi network
+
+Lỗi "Failed to fetch" hoặc ERR_NAME_NOT_RESOLVED:
+- Domain không tồn tại
+- URL không đúng
+- Không có kết nối mạng
+- CORS issue
+
+Cách xử lý:
+- Kiểm tra URL có đúng không
+- Kiểm tra domain có tồn tại không
+- Kiểm tra kết nối mạng
+- Hiển thị thông báo lỗi rõ ràng cho user
 
 - Luôn dùng try/catch để xử lý lỗi
 - Luôn set taiTrang = false trong finally block
 - Kiểm tra response.ok với Fetch, kiểm tra error.response?.status với Axios
 - Dùng spread operator (...) để cập nhật state không mutate
-- MockAPI có giới hạn số request miễn phí
-- URL API phải đúng format từ MockAPI dashboard
+- Mockaro có thể yêu cầu API key trong headers
+- URL API phải đúng format từ Mockaro dashboard
+- Xử lý các loại lỗi network khác nhau để user hiểu rõ vấn đề
