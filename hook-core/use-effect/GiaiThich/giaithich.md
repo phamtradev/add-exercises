@@ -77,8 +77,6 @@ useEffect(() => {
 }, [thoiGian])
 In ra console mỗi khi thoiGian thay đổi.
 
-Lưu ý quan trọng
-
 - useEffect chạy sau khi render xong
 - Luôn cleanup các timer, subscription khi component unmount
 - Dependency array rỗng [] nghĩa là chỉ chạy 1 lần
