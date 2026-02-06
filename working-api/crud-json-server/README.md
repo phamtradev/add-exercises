@@ -1,16 +1,51 @@
-# React + Vite
+# CRUD với JSON Server
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Project này demo CRUD operations sử dụng cả Fetch API (async/await) và Axios với JSON Server (local).
 
-Currently, two official plugins are available:
+## Cài đặt
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm install
+```
 
-## React Compiler
+## Cách chạy
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Bước 1: Chạy JSON Server
 
-## Expanding the ESLint configuration
+Mở terminal thứ nhất và chạy:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm run server
+```
+
+JSON Server sẽ chạy tại: `http://localhost:3001`
+
+### Bước 2: Chạy React App
+
+Mở terminal thứ hai và chạy:
+
+```bash
+npm run dev
+```
+
+React App sẽ chạy tại: `http://localhost:5173`
+
+## Cấu trúc
+
+- `db.json`: File database cho JSON Server
+- `src/App.jsx`: Component CRUD chính
+- API URL: `http://localhost:3001/users`
+
+## Các chức năng
+
+- **CREATE**: Tạo user mới (có cả Fetch và Axios)
+- **READ**: Đọc danh sách users (có cả Fetch và Axios)
+- **UPDATE**: Cập nhật user (có cả Fetch và Axios)
+- **DELETE**: Xóa user (có cả Fetch và Axios)
+
+## Lưu ý
+
+- Phải chạy JSON Server trước khi sử dụng app
+- Dữ liệu được lưu trong file `db.json`
+- JSON Server tự động tạo ID cho item mới
+- Có thể chỉnh sửa `db.json` trực tiếp để thêm dữ liệu mẫu
