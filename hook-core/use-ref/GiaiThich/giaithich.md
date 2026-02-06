@@ -60,8 +60,6 @@ Khi nào dùng useRef
 3. Lưu giá trị từ lần render trước
 4. Lưu timer ID hoặc subscription
 
-Lưu ý quan trọng
-
 - ref.current có thể thay đổi mà không làm component re-render
 - Không nên đọc ref.current trong quá trình render
 - ref.current có thể là null nếu element chưa được mount
