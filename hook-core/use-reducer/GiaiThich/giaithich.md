@@ -83,8 +83,6 @@ So sánh với useState
 useState phù hợp cho state đơn giản
 useReducer phù hợp cho state phức tạp, có nhiều logic cập nhật
 
-Lưu ý quan trọng
-
 - Reducer phải là pure function (không thay đổi state cũ, trả về state mới)
 - Luôn return state mới, không được mutate state cũ
 - Action phải có type
