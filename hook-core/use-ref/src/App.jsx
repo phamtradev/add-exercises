@@ -1,34 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useRef, useState } from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const inputRef = useRef(null)
+  const countRef = useRef(0)
+  const [renderCount, setRenderCount] = useState(0)
+
+  const handleFocus = () => {
+    inputRef.current.focus()
+  }
+
+  const handleIncrement = () => {
+    countRef.current = countRef.current + 1
+    console.log('Giá trị countRef:', countRef.current)
+    setRenderCount(renderCount + 1)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="container">
+      <div className="section">
+        <h2>1. Focus Input</h2>
+        <input 
+          ref={inputRef} 
+          type="text" 
+          placeholder="Nhập text..."
+          className="input-field"
+        />
+        <button onClick={handleFocus}>
+          Focus vào input
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+
+      <div className="section">
+        <h2>2. Đếm không re-render</h2>
+        <p>Số lần render: {renderCount}</p>
+        <button onClick={handleIncrement}>
+          Tăng countRef
+        </button>
+      </div>
+    </div>
   )
 }
 
